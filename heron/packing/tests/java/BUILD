@@ -6,7 +6,8 @@ packing_deps_files = [
     "//heron/spi/src/java:common-spi-java",
     "//heron/spi/src/java:packing-spi-java",
     "//heron/packing/src/java:roundrobin-packing",
-    "//heron/packing/src/java:binpacking-packing"
+    "//heron/packing/src/java:binpacking-packing",
+    "//heron/packing/src/java:trevorpacking-packing"
 ]
 
 test_deps_files = [
@@ -23,6 +24,14 @@ roundrobin_deps_files = \
     ]
 
 binpacking_deps_files = \
+    heron_java_proto_files() + \
+    packing_deps_files + \
+    test_deps_files + [
+        "//heron/api/src/java:api-java",
+        "//heron/spi/src/java:utils-spi-java",
+    ]
+
+trevorpacking_deps_files = \
     heron_java_proto_files() + \
     packing_deps_files + \
     test_deps_files + [
@@ -65,6 +74,15 @@ java_test(
         ["**/binpacking/FirstFitDecreasingPackingTest.java"]
     ),
     deps = binpacking_deps_files,
+    size = "small",
+)
+
+java_test(
+    name = "HomogeneousPackingTest",
+    srcs = glob(
+        ["**/trevorpacking/HomogeneousPackingTest.java"]
+    ),
+    deps = trevorpacking_deps_files,
     size = "small",
 )
 

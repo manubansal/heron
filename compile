@@ -1,6 +1,10 @@
 #!/bin/bash
 
-./bazel_configure.py
-bazel build --config=ubuntu heron/...
-bazel build --config=ubuntu scripts/packages:binpkgs  
-bazel build --config=ubuntu scripts/packages:tarpkgs
+#all
+#bazel build --config=ubuntu heron/...
+#bazel build --config=ubuntu scripts/packages:binpkgs  
+#bazel build --config=ubuntu scripts/packages:tarpkgs
+
+#selected
+bazel build heron/packing/src/java:trevorpacking-packing
+bazel build heron/packing/tests/java:HomogeneousPackingTest
