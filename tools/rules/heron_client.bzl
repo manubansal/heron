@@ -38,12 +38,14 @@ def heron_client_lib_scheduler_files():
         "//heron/schedulers/src/java:heron-marathon-scheduler",
         "//heron/packing/src/java:heron-roundrobin-packing",
 	"//heron/packing/src/java:heron-binpacking-packing",
+	"//heron/packing/src/java:heron-trevorpacking-packing",
     ]
 
 def heron_client_lib_packing_files():
     return [
         "//heron/packing/src/java:heron-roundrobin-packing",
         "//heron/packing/src/java:heron-binpacking-packing",
+        "//heron/packing/src/java:heron-trevorpacking-packing",
 
     ]
 
