@@ -14,21 +14,21 @@
 
 package com.twitter.heron.packing.trevorpacking;
 
-import java.util.HashSet;
-import java.util.Set;
+//import java.util.HashSet;
+//import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.twitter.heron.api.generated.TopologyAPI;
-import com.twitter.heron.packing.AssertPacking;
+//import com.twitter.heron.packing.AssertPacking;
 import com.twitter.heron.packing.PackingUtils;
 import com.twitter.heron.spi.common.ClusterDefaults;
 import com.twitter.heron.spi.common.Config;
-import com.twitter.heron.spi.common.Constants;
+//import com.twitter.heron.spi.common.Constants;
 import com.twitter.heron.spi.common.Keys;
 import com.twitter.heron.spi.packing.PackingPlan;
-import com.twitter.heron.spi.packing.Resource;
+//import com.twitter.heron.spi.packing.Resource;
 import com.twitter.heron.spi.utils.TopologyTests;
 import com.twitter.heron.spi.utils.TopologyUtils;
 
@@ -56,196 +56,197 @@ public class HomogeneousPackingTest {
     return packing.pack();
   }
 
-  @Test
-  public void testCheckFailure() throws Exception {
-    int numContainers = 2;
-    int spoutParallelism = 4;
-    int boltParallelism = 3;
+  //@Test
+  //public void testCheckFailure() throws Exception {
+  //  int numContainers = 2;
+  //  int spoutParallelism = 4;
+  //  int boltParallelism = 3;
 
-    // Set up the topology and its config
-    com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
-    topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
+  //  // Set up the topology and its config
+  //  com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
+  //  topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
 
-    // Explicit set insufficient ram for container
-    long containerRam = -1L * Constants.GB;
+  //  // Explicit set insufficient ram for container
+  //  long containerRam = -1L * Constants.GB;
 
-    topologyConfig.setContainerRamRequested(containerRam);
+  //  topologyConfig.setContainerRamRequested(containerRam);
 
-    TopologyAPI.Topology topology =  getTopology(spoutParallelism, boltParallelism, topologyConfig);
-    PackingPlan packingPlan = getHomogeneousPackingPlan(topology);
+  //  TopologyAPI.Topology topology =
+  //    getTopology(spoutParallelism, boltParallelism, topologyConfig);
+  //  PackingPlan packingPlan = getHomogeneousPackingPlan(topology);
 
-    Assert.assertNull(packingPlan);
-  }
+  //  Assert.assertNull(packingPlan);
+  //}
 
-  @Test
-  public void testDefaultResources() throws Exception {
-    int numContainers = 2;
-    int spoutParallelism = 4;
-    int boltParallelism = 3;
-    Integer totalInstances = spoutParallelism + boltParallelism;
+  //@Test
+  //public void testDefaultResources() throws Exception {
+  //  int numContainers = 2;
+  //  int spoutParallelism = 4;
+  //  int boltParallelism = 3;
+  //  Integer totalInstances = spoutParallelism + boltParallelism;
 
-    // Set up the topology and its config
-    com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
-    topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
+  //  // Set up the topology and its config
+  //  com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
+  //  topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
 
-    // No explicit resources required
-    TopologyAPI.Topology topologyNoExplicitResourcesConfig =
-        getTopology(spoutParallelism, boltParallelism, topologyConfig);
-    PackingPlan packingPlanNoExplicitResourcesConfig =
-        getHomogeneousPackingPlan(topologyNoExplicitResourcesConfig);
+  //  // No explicit resources required
+  //  TopologyAPI.Topology topologyNoExplicitResourcesConfig =
+  //      getTopology(spoutParallelism, boltParallelism, topologyConfig);
+  //  PackingPlan packingPlanNoExplicitResourcesConfig =
+  //      getHomogeneousPackingPlan(topologyNoExplicitResourcesConfig);
 
-    Assert.assertEquals(numContainers,
-        packingPlanNoExplicitResourcesConfig.getContainers().size());
-    Assert.assertEquals(totalInstances, packingPlanNoExplicitResourcesConfig.getInstanceCount());
-  }
+  //  Assert.assertEquals(numContainers,
+  //      packingPlanNoExplicitResourcesConfig.getContainers().size());
+  //  Assert.assertEquals(totalInstances, packingPlanNoExplicitResourcesConfig.getInstanceCount());
+  //}
 
-  /**
-   * Test the scenario container level resource config are set
-   */
-  @Test
-  public void testContainerRequestedResources() throws Exception {
-    int numContainers = 2;
-    int spoutParallelism = 4;
-    int boltParallelism = 3;
-    Integer totalInstances = spoutParallelism + boltParallelism;
+  ///**
+  // * Test the scenario container level resource config are set
+  // */
+  //@Test
+  //public void testContainerRequestedResources() throws Exception {
+  //  int numContainers = 2;
+  //  int spoutParallelism = 4;
+  //  int boltParallelism = 3;
+  //  Integer totalInstances = spoutParallelism + boltParallelism;
 
-    // Set up the topology and its config
-    com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
-    topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
-    // Explicit set resources for container
-    long containerRam = 10L * Constants.GB;
-    long containerDisk = 20L * Constants.GB;
-    float containerCpu = 30;
+  //  // Set up the topology and its config
+  //  com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
+  //  topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
+  //  // Explicit set resources for container
+  //  long containerRam = 10L * Constants.GB;
+  //  long containerDisk = 20L * Constants.GB;
+  //  float containerCpu = 30;
 
-    topologyConfig.setContainerRamRequested(containerRam);
-    topologyConfig.setContainerDiskRequested(containerDisk);
-    topologyConfig.setContainerCpuRequested(containerCpu);
-    TopologyAPI.Topology topologyExplicitResourcesConfig =
-        getTopology(spoutParallelism, boltParallelism, topologyConfig);
-    PackingPlan packingPlanExplicitResourcesConfig =
-        getHomogeneousPackingPlan(topologyExplicitResourcesConfig);
+  //  topologyConfig.setContainerRamRequested(containerRam);
+  //  topologyConfig.setContainerDiskRequested(containerDisk);
+  //  topologyConfig.setContainerCpuRequested(containerCpu);
+  //  TopologyAPI.Topology topologyExplicitResourcesConfig =
+  //      getTopology(spoutParallelism, boltParallelism, topologyConfig);
+  //  PackingPlan packingPlanExplicitResourcesConfig =
+  //      getHomogeneousPackingPlan(topologyExplicitResourcesConfig);
 
-    Assert.assertEquals(numContainers,
-        packingPlanExplicitResourcesConfig.getContainers().size());
-    Assert.assertEquals(totalInstances, packingPlanExplicitResourcesConfig.getInstanceCount());
+  //  Assert.assertEquals(numContainers,
+  //      packingPlanExplicitResourcesConfig.getContainers().size());
+  //  Assert.assertEquals(totalInstances, packingPlanExplicitResourcesConfig.getInstanceCount());
 
-    for (PackingPlan.ContainerPlan containerPlan
-        : packingPlanExplicitResourcesConfig.getContainers()) {
-      Assert.assertEquals(containerCpu, containerPlan.getResource().getCpu(), DELTA);
+  //  for (PackingPlan.ContainerPlan containerPlan
+  //      : packingPlanExplicitResourcesConfig.getContainers()) {
+  //    Assert.assertEquals(containerCpu, containerPlan.getResource().getCpu(), DELTA);
 
-      Assert.assertEquals((double) containerRam,
-          (double) containerPlan.getResource().getRam(),
-          containerPlan.getInstances().size());
+  //    Assert.assertEquals((double) containerRam,
+  //        (double) containerPlan.getResource().getRam(),
+  //        containerPlan.getInstances().size());
 
-      Assert.assertEquals(containerDisk, containerPlan.getResource().getDisk());
+  //    Assert.assertEquals(containerDisk, containerPlan.getResource().getDisk());
 
-      // All instances' resource requirement should be equal
-      // So the size of set should be 1
-      Set<Resource> resources = new HashSet<>();
-      for (PackingPlan.InstancePlan instancePlan : containerPlan.getInstances()) {
-        resources.add(instancePlan.getResource());
-      }
+  //    // All instances' resource requirement should be equal
+  //    // So the size of set should be 1
+  //    Set<Resource> resources = new HashSet<>();
+  //    for (PackingPlan.InstancePlan instancePlan : containerPlan.getInstances()) {
+  //      resources.add(instancePlan.getResource());
+  //    }
 
-      Assert.assertEquals(1, resources.size());
-      int instancesCount = containerPlan.getInstances().size();
-      Assert.assertEquals(
-          (containerRam - HomogeneousPacking.DEFAULT_RAM_PADDING_PER_CONTAINER) / instancesCount,
-          resources.iterator().next().getRam());
-    }
-  }
+  //    Assert.assertEquals(1, resources.size());
+  //    int instancesCount = containerPlan.getInstances().size();
+  //    Assert.assertEquals(
+  //        (containerRam - HomogeneousPacking.DEFAULT_RAM_PADDING_PER_CONTAINER) / instancesCount,
+  //        resources.iterator().next().getRam());
+  //  }
+  //}
 
-  /**
-   * Test the scenario ram map config is partially set
-   */
-  @Test
-  public void testCompleteRamMapRequested() throws Exception {
-    int numContainers = 2;
-    int spoutParallelism = 4;
-    int boltParallelism = 3;
-    Integer totalInstances = spoutParallelism + boltParallelism;
+  ///**
+  // * Test the scenario ram map config is partially set
+  // */
+  //@Test
+  //public void testCompleteRamMapRequested() throws Exception {
+  //  int numContainers = 2;
+  //  int spoutParallelism = 4;
+  //  int boltParallelism = 3;
+  //  Integer totalInstances = spoutParallelism + boltParallelism;
 
-    // Set up the topology and its config
-    com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
-    topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
+  //  // Set up the topology and its config
+  //  com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
+  //  topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
 
-    // Explicit set resources for container
-    // the value should be ignored, since we set the complete component ram map
-    long containerRam = Long.MAX_VALUE;
+  //  // Explicit set resources for container
+  //  // the value should be ignored, since we set the complete component ram map
+  //  long containerRam = Long.MAX_VALUE;
 
-    // Explicit set component ram map
-    long boltRam = 1L * Constants.GB;
-    long spoutRam = 2L * Constants.GB;
+  //  // Explicit set component ram map
+  //  long boltRam = 1L * Constants.GB;
+  //  long spoutRam = 2L * Constants.GB;
 
-    topologyConfig.setContainerRamRequested(containerRam);
-    topologyConfig.setComponentRam(BOLT_NAME, boltRam);
-    topologyConfig.setComponentRam(SPOUT_NAME, spoutRam);
+  //  topologyConfig.setContainerRamRequested(containerRam);
+  //  topologyConfig.setComponentRam(BOLT_NAME, boltRam);
+  //  topologyConfig.setComponentRam(SPOUT_NAME, spoutRam);
 
-    TopologyAPI.Topology topologyExplicitRamMap =
-        getTopology(spoutParallelism, boltParallelism, topologyConfig);
-    PackingPlan packingPlanExplicitRamMap =
-        getHomogeneousPackingPlan(topologyExplicitRamMap);
+  //  TopologyAPI.Topology topologyExplicitRamMap =
+  //      getTopology(spoutParallelism, boltParallelism, topologyConfig);
+  //  PackingPlan packingPlanExplicitRamMap =
+  //      getHomogeneousPackingPlan(topologyExplicitRamMap);
 
-    AssertPacking.assertContainers(packingPlanExplicitRamMap.getContainers(),
-        BOLT_NAME, SPOUT_NAME, boltRam, spoutRam, containerRam);
-    Assert.assertEquals(totalInstances, packingPlanExplicitRamMap.getInstanceCount());
-  }
+  //  AssertPacking.assertContainers(packingPlanExplicitRamMap.getContainers(),
+  //      BOLT_NAME, SPOUT_NAME, boltRam, spoutRam, containerRam);
+  //  Assert.assertEquals(totalInstances, packingPlanExplicitRamMap.getInstanceCount());
+  //}
 
-  /**
-   * Test the scenario ram map config is partially set
-   */
-  @Test
-  public void testPartialRamMap() throws Exception {
-    int numContainers = 2;
-    int spoutParallelism = 4;
-    int boltParallelism = 3;
-    Integer totalInstances = spoutParallelism + boltParallelism;
+  ///**
+  // * Test the scenario ram map config is partially set
+  // */
+  //@Test
+  //public void testPartialRamMap() throws Exception {
+  //  int numContainers = 2;
+  //  int spoutParallelism = 4;
+  //  int boltParallelism = 3;
+  //  Integer totalInstances = spoutParallelism + boltParallelism;
 
-    // Set up the topology and its config
-    com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
-    topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
+  //  // Set up the topology and its config
+  //  com.twitter.heron.api.Config topologyConfig = new com.twitter.heron.api.Config();
+  //  topologyConfig.put(com.twitter.heron.api.Config.TOPOLOGY_STMGRS, numContainers);
 
-    // Explicit set resources for container
-    long containerRam = 10L * Constants.GB;
+  //  // Explicit set resources for container
+  //  long containerRam = 10L * Constants.GB;
 
-    // Explicit set component ram map
-    long boltRam = 1L * Constants.GB;
+  //  // Explicit set component ram map
+  //  long boltRam = 1L * Constants.GB;
 
-    topologyConfig.setContainerRamRequested(containerRam);
-    topologyConfig.setComponentRam(BOLT_NAME, boltRam);
+  //  topologyConfig.setContainerRamRequested(containerRam);
+  //  topologyConfig.setComponentRam(BOLT_NAME, boltRam);
 
-    TopologyAPI.Topology topologyExplicitRamMap =
-        getTopology(spoutParallelism, boltParallelism, topologyConfig);
-    PackingPlan packingPlanExplicitRamMap =
-        getHomogeneousPackingPlan(topologyExplicitRamMap);
-    Assert.assertEquals(totalInstances, packingPlanExplicitRamMap.getInstanceCount());
+  //  TopologyAPI.Topology topologyExplicitRamMap =
+  //      getTopology(spoutParallelism, boltParallelism, topologyConfig);
+  //  PackingPlan packingPlanExplicitRamMap =
+  //      getHomogeneousPackingPlan(topologyExplicitRamMap);
+  //  Assert.assertEquals(totalInstances, packingPlanExplicitRamMap.getInstanceCount());
 
-    // Ram for bolt should be the value in component ram map
-    for (PackingPlan.ContainerPlan containerPlan
-        : packingPlanExplicitRamMap.getContainers()) {
-      Assert.assertEquals(containerRam, containerPlan.getResource().getRam());
-      int boltCount = 0;
-      int instancesCount = containerPlan.getInstances().size();
-      for (PackingPlan.InstancePlan instancePlan : containerPlan.getInstances()) {
-        if (instancePlan.getComponentName().equals(BOLT_NAME)) {
-          Assert.assertEquals(boltRam, instancePlan.getResource().getRam());
-          boltCount++;
-        }
-      }
+  //  // Ram for bolt should be the value in component ram map
+  //  for (PackingPlan.ContainerPlan containerPlan
+  //      : packingPlanExplicitRamMap.getContainers()) {
+  //    Assert.assertEquals(containerRam, containerPlan.getResource().getRam());
+  //    int boltCount = 0;
+  //    int instancesCount = containerPlan.getInstances().size();
+  //    for (PackingPlan.InstancePlan instancePlan : containerPlan.getInstances()) {
+  //      if (instancePlan.getComponentName().equals(BOLT_NAME)) {
+  //        Assert.assertEquals(boltRam, instancePlan.getResource().getRam());
+  //        boltCount++;
+  //      }
+  //    }
 
-      // Ram for spout should be:
-      // (containerRam - all ram for bolt - ram for padding) / (# of spouts)
-      int spoutCount = instancesCount - boltCount;
-      for (PackingPlan.InstancePlan instancePlan : containerPlan.getInstances()) {
-        if (instancePlan.getComponentName().equals(SPOUT_NAME)) {
-          Assert.assertEquals(
-              (containerRam
-                  - boltCount * boltRam
-                  - HomogeneousPacking.DEFAULT_RAM_PADDING_PER_CONTAINER) / spoutCount,
-              instancePlan.getResource().getRam());
-        }
-      }
-    }
-  }
+  //    // Ram for spout should be:
+  //    // (containerRam - all ram for bolt - ram for padding) / (# of spouts)
+  //    int spoutCount = instancesCount - boltCount;
+  //    for (PackingPlan.InstancePlan instancePlan : containerPlan.getInstances()) {
+  //      if (instancePlan.getComponentName().equals(SPOUT_NAME)) {
+  //        Assert.assertEquals(
+  //            (containerRam
+  //                - boltCount * boltRam
+  //                - HomogeneousPacking.DEFAULT_RAM_PADDING_PER_CONTAINER) / spoutCount,
+  //            instancePlan.getResource().getRam());
+  //      }
+  //    }
+  //  }
+  //}
 
   /**
    * test even packing of instances
@@ -272,21 +273,36 @@ public class HomogeneousPackingTest {
     for (PackingPlan.ContainerPlan container : output.getContainers()) {
       Assert.assertEquals(numInstance / numContainers, container.getInstances().size());
 
-      // Verify each container got 2 spout and 2 bolt and container 1 got
-      assertComponentCount(container, "spout", 2);
-      assertComponentCount(container, "bolt", 2);
+      // Verify containers got 4 spouts or 4 bolts
+      //assertComponentCount(container, "spout", 2);
+      //assertComponentCount(container, "bolt", 2);
+
+      int spoutCount = getComponentCount(container, "spout");
+      int boltCount = getComponentCount(container, "bolt");
+      if (spoutCount > 0) {
+        Assert.assertEquals(4, spoutCount);
+        Assert.assertEquals(0, boltCount);
+      } else {
+        Assert.assertEquals(0, spoutCount);
+        Assert.assertEquals(4, boltCount);
+      }
     }
   }
 
-  private static void assertComponentCount(
-      PackingPlan.ContainerPlan containerPlan, String componentName, int expectedCount) {
+  private static int getComponentCount(
+      PackingPlan.ContainerPlan containerPlan, String componentName) {
     int count = 0;
     for (PackingPlan.InstancePlan instancePlan : containerPlan.getInstances()) {
       if (componentName.equals(PackingUtils.getComponentName(instancePlan.getId()))) {
         count++;
       }
     }
-    Assert.assertEquals(expectedCount, count);
+    return count;
+  }
+
+  private static void assertComponentCount(
+      PackingPlan.ContainerPlan containerPlan, String componentName, int expectedCount) {
+    Assert.assertEquals(expectedCount, getComponentCount(containerPlan, componentName));
   }
 
 }

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./bazel_configure.py
