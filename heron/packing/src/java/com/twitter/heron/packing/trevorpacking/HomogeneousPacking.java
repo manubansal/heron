@@ -256,9 +256,9 @@ public class HomogeneousPacking implements IPacking {
       int numInstance = parallelismMap.get(component);
       for (int i = 0; i < numInstance; ++i) {
         allocation.get(index).add(PackingUtils.getInstanceId(index, component, globalTaskIndex, i));
+        globalTaskIndex++;
       }
       index = (index == numContainer) ? 1 : index + 1;
-      globalTaskIndex++;
     }
     return allocation;
   }
