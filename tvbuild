@@ -1,9 +1,17 @@
 #!/bin/bash
 
-#all
-bazel build --config=ubuntu heron/...
-bazel build --config=ubuntu scripts/packages:binpkgs  
-bazel build --config=ubuntu scripts/packages:tarpkgs
+#all, with release optimization
+CACHE=
+CACHE=--output_base=/mnt/bazel_cache
+bazel $CACHE build -c opt --config=ubuntu heron/...
+bazel $CACHE build -c opt --config=ubuntu scripts/packages:binpkgs  
+bazel $CACHE build -c opt --config=ubuntu scripts/packages:tarpkgs
+
+
+#all, no optimization
+#bazel build --config=ubuntu heron/...
+#bazel build --config=ubuntu scripts/packages:binpkgs  
+#bazel build --config=ubuntu scripts/packages:tarpkgs
 
 #selected
 #bazel build heron/packing/src/java:trevorpacking-packing
