@@ -92,14 +92,14 @@ public class HomogeneousPacking implements IPacking {
   private TopologyAPI.Topology topology;
 
   private long instanceRamDefault;
-  private double instanceCpuDefault;
+  private float instanceCpuDefault;
   private long instanceDiskDefault;
 
   @Override
   public void initialize(Config config, TopologyAPI.Topology inputTopology) {
     this.topology = inputTopology;
     this.instanceRamDefault = Context.instanceRam(config);
-    this.instanceCpuDefault = Context.instanceCpu(config).doubleValue();
+    this.instanceCpuDefault = Context.instanceCpu(config).floatValue();
     this.instanceDiskDefault = Context.instanceDisk(config);
   }
 
@@ -270,13 +270,13 @@ public class HomogeneousPacking implements IPacking {
    * @return # of instances in the largest container
    */
   private int getLargestContainerSize(Map<Integer, List<String>> allocation) {
-    int max = 0;
+    float max = 0;
     for (List<String> instances : allocation.values()) {
       if (instances.size() > max) {
-        max = instances.size();
+        max = instances.size() * this.instanceCpuDefault;
       }
     }
-    return max;
+    return Math.round(max);
   }
 
   /**

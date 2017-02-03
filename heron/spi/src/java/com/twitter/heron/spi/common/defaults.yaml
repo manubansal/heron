@@ -58,7 +58,7 @@ UPLOADER_CLASSPATH:           ${HERON_LIB}/uploader/*
 # CPU is specified in number of cores, fractional cores allowed, (e.g) 1.2
 ################################################################################
 STMGR_RAM:                    1073741824
-INSTANCE_CPU:                 1
+INSTANCE_CPU:                 0.5
 INSTANCE_RAM:                 1073741824
 INSTANCE_DISK:                1073741824
 
