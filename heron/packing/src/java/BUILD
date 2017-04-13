@@ -42,6 +42,7 @@ ilppacking_deps_files = \
         "//heron/api/src/java:api-java",
         "//heron/spi/src/java:statemgr-spi-java",
         "//heron/spi/src/java:utils-spi-java",
+	"@com_googlecode_json_simple_json_simple//jar",
     ]
 
 java_library(
