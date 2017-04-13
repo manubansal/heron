@@ -36,6 +36,13 @@ trevorpacking_deps_files = \
         "//heron/spi/src/java:utils-spi-java",
     ]
 
+ilppacking_deps_files = \
+    heron_java_proto_files() + \
+    packing_deps_files + [
+        "//heron/api/src/java:api-java",
+        "//heron/spi/src/java:statemgr-spi-java",
+        "//heron/spi/src/java:utils-spi-java",
+    ]
 
 java_library(
     name = 'null-packing',
@@ -87,6 +94,12 @@ java_library(
     deps = trevorpacking_deps_files,
 )
 
+java_library(
+    name='ilppacking-packing',
+    srcs = glob(["**/ILP/**/*.java","**/packing/*.java"]),
+    deps = ilppacking_deps_files,
+)
+
 java_binary(
     name='binpacking-packing-unshaded',
     srcs = glob(["**/binpacking/**/*.java","**/packing/*.java"]),
@@ -97,6 +110,12 @@ java_binary(
     name='trevorpacking-packing-unshaded',
     srcs = glob(["**/trevorpacking/**/*.java","**/packing/*.java"]),
     deps = trevorpacking_deps_files,
+)
+
+java_binary(
+    name='ilppacking-packing-unshaded',
+    srcs = glob(["**/ILP/**/*.java","**/packing/*.java"]),
+    deps = ilppacking_deps_files,
 )
 
 genrule(
@@ -110,5 +129,12 @@ genrule(
     name = "heron-trevorpacking-packing",
     srcs = [":trevorpacking-packing-unshaded_deploy.jar"],
     outs = ["heron-trevorpacking-packing.jar"],
+    cmd  = "cp $< $@",
+)
+
+genrule(
+    name = "heron-ilppacking-packing",
+    srcs = [":ilppacking-packing-unshaded_deploy.jar"],
+    outs = ["heron-ilppacking-packing.jar"],
     cmd  = "cp $< $@",
 )

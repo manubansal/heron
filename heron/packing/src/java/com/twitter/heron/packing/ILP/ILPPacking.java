@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//package com.twitter.heron.packing.roundrobin;
-package edu.stanford;
+package com.twitter.heron.packing.ilppacking;
+//package edu.stanford;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,8 +26,8 @@ import java.util.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 
 import com.twitter.heron.api.generated.TopologyAPI;
-//import com.twitter.heron.packing.PackingUtils;
-import edu.stanford.PackingUtils;
+import com.twitter.heron.packing.PackingUtils;
+//import edu.stanford.PackingUtils;
 import com.twitter.heron.spi.common.Config;
 import com.twitter.heron.spi.common.Constants;
 import com.twitter.heron.spi.common.Context;
@@ -38,7 +38,8 @@ import com.twitter.heron.spi.utils.TopologyUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONValue;
-
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 /**
  * Round-robin packing algorithm
@@ -80,8 +81,8 @@ import org.json.simple.JSONValue;
  * 7. The pack() return null if PackingPlan fails to pass the safe check, for instance,
  * the size of ram for an instance is less than the minimal required value.
  */
-public class TrevorPacking implements IPacking {
-  private static final Logger LOG = Logger.getLogger(TrevorPacking.class.getName());
+public class ILPPacking implements IPacking {
+  private static final Logger LOG = Logger.getLogger(ILPPacking.class.getName());
 
   // TODO(mfu): Read these values from Config
   @VisibleForTesting
@@ -94,8 +95,8 @@ public class TrevorPacking implements IPacking {
 
   // Use as a stub as default number value when getting config value
   private static final String NOT_SPECIFIED_NUMBER_VALUE = "-1";
-  private static final String CONTAINER_ALLOCATION_FILE = "~/workspace/trevor/ilp/container_alloc.json"
-  private static final String INSTANCE_TRANSLATION_FILE = "~/workspace/trevor/ilp/tanslation.json"
+  private static final String CONTAINER_ALLOCATION_FILE = "~/workspace/trevor/ilp/container_alloc.json";
+  private static final String INSTANCE_TRANSLATION_FILE = "~/workspace/trevor/ilp/tanslation.json";
 
   private TopologyAPI.Topology topology;
 
@@ -242,7 +243,7 @@ public class TrevorPacking implements IPacking {
     BufferedReader reader = new BufferedReader(new FileReader(CONTAINER_ALLOCATION_FILE));
     String line;
     while ((line = reader.readLine()) != null) {
-        List list = (JSONArray) JSONValue.parse(line);  
+        JSONArray list = (JSONArray) JSONValue.parse(line);  
         allocation = (JSONObject) list.get(0);
     }
     reader.close();
@@ -254,7 +255,7 @@ public class TrevorPacking implements IPacking {
     BufferedReader reader = new BufferedReader(new FileReader(INSTANCE_TRANSLATION_FILE));
     String line;
     while ((line = reader.readLine()) != null) {
-        List list = (JSONArray) JSONValue.parse(line);  
+        JSONArray list = (JSONArray) JSONValue.parse(line);  
         translation = (JSONObject) list.get(0);
     }
     reader.close();
@@ -280,12 +281,12 @@ public class TrevorPacking implements IPacking {
       allocation.put(i, new ArrayList<String>());
     }
     int globalTaskIndex = 1;
-    Map<String,Int> parallelism = new HashMap<>()
-    for(Map.Entry<String, List<String>> entry : s_allocation.entrySet())
+    Map<String,Integer> parallelism = new HashMap<>();
+    for(Map.Entry<String, List<String>> entry : s_allocation.entrySet()) {
       String key = entry.getKey();
       List<String> value = entry.getValue();
       for (String inst : value) {
-        component = translation.get(inst);
+        String component = translation.get(inst);
         if (!parallelism.containsKey(component)) {
           parallelism.put(component,1);
         } else {
