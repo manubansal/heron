@@ -117,6 +117,11 @@ maven_jar(
 )
 
 maven_jar(
+ name = "com_googlecode_json_simple",
+ artifact = "com.googlecode.json-simple:json-simple:1.1.1"
+)
+
+maven_jar(
   name = "com_fasterxml_jackson_core_jackson_annotations",
   artifact = "com.fasterxml.jackson.core:jackson-annotations:" + jackson_version,
 )
