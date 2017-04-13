@@ -15,9 +15,16 @@
 package com.twitter.heron.packing.ilppacking;
 //package edu.stanford;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,9 +32,12 @@ import java.util.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
 import com.twitter.heron.api.generated.TopologyAPI;
 import com.twitter.heron.packing.PackingUtils;
-//import edu.stanford.PackingUtils;
 import com.twitter.heron.spi.common.Config;
 import com.twitter.heron.spi.common.Constants;
 import com.twitter.heron.spi.common.Context;
@@ -35,11 +45,6 @@ import com.twitter.heron.spi.packing.IPacking;
 import com.twitter.heron.spi.packing.PackingPlan;
 import com.twitter.heron.spi.packing.Resource;
 import com.twitter.heron.spi.utils.TopologyUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONValue;
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 /**
  * Round-robin packing algorithm
@@ -95,7 +100,7 @@ public class ILPPacking implements IPacking {
 
   // Use as a stub as default number value when getting config value
   private static final String NOT_SPECIFIED_NUMBER_VALUE = "-1";
-  private static final String CONTAINER_ALLOCATION_FILE = "~/workspace/trevor/ilp/container_alloc.json";
+  private static final String CONT_ALLOCATION_FILE = "~/workspace/trevor/ilp/container_alloc.json";
   private static final String INSTANCE_TRANSLATION_FILE = "~/workspace/trevor/ilp/tanslation.json";
 
   private TopologyAPI.Topology topology;
@@ -238,25 +243,53 @@ public class ILPPacking implements IPacking {
     return instancesRamMapInContainer;
   }
 
-  private Map<String,List<String>> decodeJSONContainerFile() {
+  private Map<String, String>  jsonToStringMap(String t)  {
+    HashMap<String, String> map = new HashMap<String, String>();
+    JSONArray list = (JSONArray) JSONValue.parse(t);
+    JSONObject jObject = (JSONObject) list.get(0);
+    for (Iterator<?> iterator = jObject.keySet().iterator(); iterator.hasNext();) {
+      String key = (String) iterator.next();
+      String value = jObject.get(key).toString();
+      map.put(key, value);
+    }
+    return map;
+  }
+
+  private Map<String, List<String>>  jsonToListMap(String t)  {
+    HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+    JSONArray list = (JSONArray) JSONValue.parse(t);
+    JSONObject jObject = (JSONObject) list.get(0);
+    for (Iterator<?> iterator = jObject.keySet().iterator(); iterator.hasNext();) {
+      String key = (String) iterator.next();
+      String value = jObject.get(key).toString();
+      List<String> items = new ArrayList<String>(
+          Arrays.asList(
+              value.replaceAll("\"", "").replaceAll("\\[", "")
+                  .replaceAll("\\]", "").split("\\s*,\\s*")));
+      map.put(key, items);
+    }
+    return map;
+  }
+
+  private Map<String, List<String>> decodeJSONContainerFile()
+      throws IOException, FileNotFoundException {
     Map<String, List<String>> allocation = new HashMap<>();
-    BufferedReader reader = new BufferedReader(new FileReader(CONTAINER_ALLOCATION_FILE));
+    BufferedReader reader = new BufferedReader(new FileReader(CONT_ALLOCATION_FILE));
     String line;
     while ((line = reader.readLine()) != null) {
-        JSONArray list = (JSONArray) JSONValue.parse(line);  
-        allocation = (JSONObject) list.get(0);
+      allocation = jsonToListMap(line);
     }
     reader.close();
     return allocation;
   }
 
-  private Map<String,String> decodeJSONTranslationFile() {
+  private Map<String, String> decodeJSONTranslationFile()
+      throws IOException, FileNotFoundException {
     Map<String, String> translation = new HashMap<>();
     BufferedReader reader = new BufferedReader(new FileReader(INSTANCE_TRANSLATION_FILE));
     String line;
     while ((line = reader.readLine()) != null) {
-        JSONArray list = (JSONArray) JSONValue.parse(line);  
-        translation = (JSONObject) list.get(0);
+      translation = jsonToStringMap(line);
     }
     reader.close();
     return translation;
@@ -268,37 +301,41 @@ public class ILPPacking implements IPacking {
    * @return containerId -&gt; list of InstanceId belonging to this container
    */
   private Map<Integer, List<String>> getILPAllocation() {
-    Map<String, List<String>> s_allocation = decodeJSONContainerFile();
-    Map<String,String> translation = decodeJSONTranslationFile();
-    Map<Integer, List<String>> allocation = new HashMap<>();
-    int numContainer = TopologyUtils.getNumContainers(topology);
-    int totalInstance = TopologyUtils.getTotalInstance(topology);
-    if (numContainer > totalInstance) {
-      throw new RuntimeException("More containers allocated than instance.");
-    }
-
-    for (int i = 1; i <= numContainer; ++i) {
-      allocation.put(i, new ArrayList<String>());
-    }
-    int globalTaskIndex = 1;
-    Map<String,Integer> parallelism = new HashMap<>();
-    for(Map.Entry<String, List<String>> entry : s_allocation.entrySet()) {
-      String key = entry.getKey();
-      List<String> value = entry.getValue();
-      for (String inst : value) {
-        String component = translation.get(inst);
-        if (!parallelism.containsKey(component)) {
-          parallelism.put(component,1);
-        } else {
-          parallelism.put(component, parallelism.get(component) + 1);
-        }
-        int i = parallelism.get(component);
-        int index = Integer.parseInt(key.replace("S",""));
-        allocation.get(index).add(PackingUtils.getInstanceId(index, component, globalTaskIndex, i));
-        globalTaskIndex++;
+    try {
+      Map<String, List<String>> containerAlloc = decodeJSONContainerFile();
+      Map<String, String> translation = decodeJSONTranslationFile();
+      Map<Integer, List<String>> allocation = new HashMap<>();
+      int numContainer = TopologyUtils.getNumContainers(topology);
+      int totalInstance = TopologyUtils.getTotalInstance(topology);
+      if (numContainer > totalInstance) {
+        throw new RuntimeException("More containers allocated than instance.");
       }
+      for (int i = 1; i <= numContainer; ++i) {
+        allocation.put(i, new ArrayList<String>());
+      }
+      int globalTaskIndex = 1;
+      Map<String, Integer> parallelism = new HashMap<>();
+      for (Map.Entry<String, List<String>> entry : containerAlloc.entrySet()) {
+        String key = entry.getKey();
+        List<String> value = entry.getValue();
+        for (String inst : value) {
+          String component = translation.get(inst);
+          if (!parallelism.containsKey(component)) {
+            parallelism.put(component, 1);
+          } else {
+            parallelism.put(component, parallelism.get(component) + 1);
+          }
+          int i = parallelism.get(component);
+          int index = Integer.parseInt(key.replace("S", ""));
+          allocation.get(index).add(PackingUtils.getInstanceId(
+              index, component, globalTaskIndex, i));
+          globalTaskIndex++;
+        }
+      }
+      return allocation;
+    } catch (IOException e) {
+      throw new RuntimeException("ERROR: Container allocation JSON file not found!\n");
     }
-    return allocation;
   }
 
   /**
