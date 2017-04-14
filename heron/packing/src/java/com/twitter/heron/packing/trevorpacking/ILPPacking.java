@@ -100,8 +100,10 @@ public class ILPPacking implements IPacking {
 
   // Use as a stub as default number value when getting config value
   private static final String NOT_SPECIFIED_NUMBER_VALUE = "-1";
-  private static final String CONT_ALLOCATION_FILE = "~/workspace/trevor/ilp/container_alloc.json";
-  private static final String INSTANCE_TRANSLATION_FILE = "~/workspace/trevor/ilp/tanslation.json";
+  private static final String CONT_ALLOCATION_FILE =
+      "~/workspace/trevor/ilp/example_json/container_alloc.json";
+  private static final String INSTANCE_TRANSLATION_FILE =
+      "~/workspace/trevor/ilp/example_json/tanslation.json";
 
   private TopologyAPI.Topology topology;
 
