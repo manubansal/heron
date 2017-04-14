@@ -305,7 +305,7 @@ public class ILPPacking implements IPacking {
       Map<String, List<String>> containerAlloc = decodeJSONContainerFile();
       Map<String, String> translation = decodeJSONTranslationFile();
       Map<Integer, List<String>> allocation = new HashMap<>();
-      int numContainer = TopologyUtils.getNumContainers(topology);
+      int numContainer = containerAlloc.size();
       int totalInstance = TopologyUtils.getTotalInstance(topology);
       if (numContainer > totalInstance) {
         throw new RuntimeException("More containers allocated than instance.");
