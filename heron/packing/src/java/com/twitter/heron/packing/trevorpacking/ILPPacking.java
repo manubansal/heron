@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.twitter.heron.packing.ilppacking;
+package com.twitter.heron.packing.trevorpacking;
 //package edu.stanford;
 
 import java.io.BufferedReader;
