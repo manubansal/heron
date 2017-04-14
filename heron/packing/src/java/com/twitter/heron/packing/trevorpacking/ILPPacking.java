@@ -32,7 +32,7 @@ import java.util.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.json.simple.JSONArray;
+//import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -256,8 +256,7 @@ public class ILPPacking implements IPacking {
 
   private Map<String, String>  jsonToStringMap(String t)  {
     HashMap<String, String> map = new HashMap<String, String>();
-    JSONArray list = (JSONArray) JSONValue.parse(t);
-    JSONObject jObject = (JSONObject) list.get(0);
+    JSONObject jObject = (JSONObject) JSONValue.parse(t);
     for (Iterator<?> iterator = jObject.keySet().iterator(); iterator.hasNext();) {
       String key = (String) iterator.next();
       String value = jObject.get(key).toString();
@@ -268,8 +267,7 @@ public class ILPPacking implements IPacking {
 
   private Map<String, List<String>>  jsonToListMap(String t)  {
     HashMap<String, List<String>> map = new HashMap<String, List<String>>();
-    JSONArray list = (JSONArray) JSONValue.parse(t);
-    JSONObject jObject = (JSONObject) list.get(0);
+    JSONObject jObject = (JSONObject) JSONValue.parse(t);
     for (Iterator<?> iterator = jObject.keySet().iterator(); iterator.hasNext();) {
       String key = (String) iterator.next();
       String value = jObject.get(key).toString();
