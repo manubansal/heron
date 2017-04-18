@@ -35,6 +35,7 @@ trevorpacking_deps_files = \
         "//heron/spi/src/java:statemgr-spi-java",
         "//heron/spi/src/java:utils-spi-java",
         "@com_googlecode_json_simple_json_simple//jar",
+        "@org_apache_commons_commons_io//jar",
     ]
 
 java_library(

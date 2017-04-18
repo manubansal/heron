@@ -16,6 +16,11 @@ maven_jar(
   artifact = "org.apache.avro:avro:1.7.4"
 )
 
+maven_jar(
+  name = "org_apache_commons_commons_io",
+  artifact = "org.apache.commons:commons-io:1.3.2"
+)
+
 maven_server(
   name = "maven_twttr_com",
   url = "http://maven.twttr.com",

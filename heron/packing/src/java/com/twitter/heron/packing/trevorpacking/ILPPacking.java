@@ -13,12 +13,14 @@
 // limitations under the License.
 
 package com.twitter.heron.packing.trevorpacking;
-//package edu.stanford;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
+import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +34,8 @@ import java.util.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 
-//import org.json.simple.JSONArray;
+import org.apache.commons.io.FileUtils;
+
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -101,11 +104,14 @@ public class ILPPacking implements IPacking {
   // Use as a stub as default number value when getting config value
   private static final String NOT_SPECIFIED_NUMBER_VALUE = "-1";
   private static final String CONT_ALLOCATION_FILE =
-      "/tmp/container_alloc.json";
-      //"~/workspace/trevor/ilp/example_json/container_alloc.json";
+      "container_alloc.json";
   private static final String INSTANCE_TRANSLATION_FILE =
-      "/tmp/translation.json";
-      //"~/workspace/trevor/ilp/example_json/tanslation.json";
+      "translation.json";
+
+  private static final String CONT_ALLOCATION_URL =
+      "http://heron01:8000/container_alloc.json";
+  private static final String INSTANCE_TRANSLATION_URL =
+      "http://heron01:8000/translation.json";
 
   private TopologyAPI.Topology topology;
 
@@ -217,6 +223,7 @@ public class ILPPacking implements IPacking {
         String componentName = PackingUtils.getComponentName(instanceId);
         if (ramMap.containsKey(componentName)) {
           long ram = ramMap.get(componentName);
+          //long ram = 1;
           ramInsideContainer.put(instanceId, ram);
           usedRam += ram;
         } else {
@@ -285,7 +292,11 @@ public class ILPPacking implements IPacking {
     Map<String, List<String>> allocation = new HashMap<>();
     BufferedReader reader;
     try {
-      reader = new BufferedReader(new FileReader(CONT_ALLOCATION_FILE));
+      File file = new File(CONT_ALLOCATION_FILE);
+      file.setWritable(true);
+      file.setReadable(true, false);
+      FileUtils.copyURLToFile(new URL(CONT_ALLOCATION_URL), file);
+      reader = new BufferedReader(new FileReader(file));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -302,7 +313,11 @@ public class ILPPacking implements IPacking {
     Map<String, String> translation = new HashMap<>();
     BufferedReader reader;
     try {
-      reader = new BufferedReader(new FileReader(INSTANCE_TRANSLATION_FILE));
+      File file = new File(INSTANCE_TRANSLATION_FILE);
+      file.setWritable(true);
+      file.setReadable(true, false);
+      FileUtils.copyURLToFile(new URL(INSTANCE_TRANSLATION_URL), file);
+      reader = new BufferedReader(new FileReader(file));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -321,11 +336,8 @@ public class ILPPacking implements IPacking {
    */
   private Map<Integer, List<String>> getILPAllocation()
       throws IOException, FileNotFoundException {
-    Map<String, List<String>> containerAlloc;
-    Map<String, String> translation;
-
-    containerAlloc = decodeJSONContainerFile();
-    translation = decodeJSONTranslationFile();
+    Map<String, List<String>> containerAlloc = decodeJSONContainerFile();
+    Map<String, String> translation = decodeJSONTranslationFile();
 
     Map<Integer, List<String>> allocation = new HashMap<>();
     int numContainer = containerAlloc.size();
@@ -390,6 +402,7 @@ public class ILPPacking implements IPacking {
         Double.toString(defaultContainerCpu));
 
     return Double.parseDouble(cpuHint);
+    //return 1.0;
   }
 
   /**
@@ -410,6 +423,7 @@ public class ILPPacking implements IPacking {
         Long.toString(defaultContainerDisk));
 
     return Long.parseLong(diskHint);
+    //return 100000;
   }
 
   /**
@@ -426,6 +440,7 @@ public class ILPPacking implements IPacking {
         NOT_SPECIFIED_NUMBER_VALUE);
 
     return Long.parseLong(ramHint);
+    //return 1000;
   }
 
   /**
