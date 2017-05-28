@@ -119,16 +119,19 @@ public class ILPPacking implements IPacking {
   private double instanceCpuDefault;
   private long instanceDiskDefault;
 
+  public String contAllocationUrl;
+  public String instanceTranslationUrl;
+
   public void ILPPacking() {
-    this.cont_allocation_url = this.CONT_ALLOCATION_URL;
-    this.instance_translation_url = this.INSTANCE_TRANSLATION_URL;
+    this.contAllocationUrl = ILPPacking.CONT_ALLOCATION_URL;
+    this.instanceTranslationUrl = ILPPacking.INSTANCE_TRANSLATION_URL;
   }
 
   public void ILPPacking(String httpServer) {
-    this.cont_allocation_url = httpServer + "/container_alloc.json";
-    this.instance_translation_url = httpServer + "/translation.json";
-    System.out.println(this.cont_allocation_url);
-    System.out.println(this.instance_translation_url);
+    this.contAllocationUrl = httpServer + "/container_alloc.json";
+    this.instanceTranslationUrl = httpServer + "/translation.json";
+    System.out.println(this.contAllocationUrl);
+    System.out.println(this.instanceTranslationUrl);
   }
 
   @Override
