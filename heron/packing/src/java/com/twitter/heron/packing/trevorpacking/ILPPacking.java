@@ -98,7 +98,7 @@ public class ILPPacking implements IPacking {
   @VisibleForTesting
   static final long DEFAULT_RAM_PADDING_PER_CONTAINER = 2L * Constants.GB;
   @VisibleForTesting
-  static final double DEFAULT_CPU_PADDING_PER_CONTAINER = 1;
+  static final double DEFAULT_CPU_PADDING_PER_CONTAINER = 0.01;
   private static final long MIN_RAM_PER_INSTANCE = 192L * Constants.MB;
 
   // Use as a stub as default number value when getting config value
@@ -109,9 +109,9 @@ public class ILPPacking implements IPacking {
       "translation.json";
 
   private static final String CONT_ALLOCATION_URL =
-      "http://heron01:8000/container_alloc.json";
+      "http://po3-heron01:8000/container_alloc.json";
   private static final String INSTANCE_TRANSLATION_URL =
-      "http://heron01:8000/translation.json";
+      "http://po3-heron01:8000/translation.json";
 
   private TopologyAPI.Topology topology;
 
@@ -124,6 +124,7 @@ public class ILPPacking implements IPacking {
     this.topology = inputTopology;
     this.instanceRamDefault = Context.instanceRam(config);
     this.instanceCpuDefault = Context.instanceCpu(config).doubleValue();
+    this.instanceCpuDefault = 0.001;
     this.instanceDiskDefault = Context.instanceDisk(config);
   }
 
@@ -157,7 +158,8 @@ public class ILPPacking implements IPacking {
       Map<String, PackingPlan.InstancePlan> instancePlanMap = new HashMap<>();
       long containerRam = DEFAULT_RAM_PADDING_PER_CONTAINER;
       for (String instanceId : instanceList) {
-        long instanceRam = instancesRamMap.get(containerId).get(instanceId);
+        //long instanceRam = instancesRamMap.get(containerId).get(instanceId);
+        long instanceRam = MIN_RAM_PER_INSTANCE;
 
         // Currently not yet support disk or cpu config for different components,
         // so just use the default value.
@@ -175,6 +177,8 @@ public class ILPPacking implements IPacking {
         instancePlanMap.put(instanceId, instancePlan);
         containerRam += instanceRam;
       }
+      //containerRam = 192L * Constants.MB;
+      containerCpu = 1;
 
       Resource resource =
           new Resource(containerCpu, containerRam, containerDiskInBytes);
@@ -268,6 +272,10 @@ public class ILPPacking implements IPacking {
       String key = (String) iterator.next();
       String value = jObject.get(key).toString();
       map.put(key, value);
+      LOG.info(String.format(
+                   "translation key: %s value: %s",
+                   key,
+                   value));
     }
     return map;
   }
@@ -341,10 +349,13 @@ public class ILPPacking implements IPacking {
 
     Map<Integer, List<String>> allocation = new HashMap<>();
     int numContainer = containerAlloc.size();
+    LOG.info(String.format(
+                 "Num of containers: %d",
+                 numContainer));
     int totalInstance = TopologyUtils.getTotalInstance(topology);
-    if (numContainer > totalInstance) {
-      throw new RuntimeException("More containers allocated than instance.");
-    }
+    //if (numContainer > totalInstance) {
+      //throw new RuntimeException("More containers allocated than instance.");
+    //}
     for (int i = 1; i <= numContainer; ++i) {
       allocation.put(i, new ArrayList<String>());
     }
@@ -362,6 +373,12 @@ public class ILPPacking implements IPacking {
         }
         int i = parallelism.get(component);
         int index = Integer.parseInt(key.replace("S", ""));
+        LOG.info(String.format(
+                     "adding instance: %s translated to %s_%d in container %d",
+                     inst,
+                     component,
+                     i,
+                     index));
         allocation.get(index).add(PackingUtils.getInstanceId(
             index, component, globalTaskIndex, i));
         globalTaskIndex++;
@@ -440,7 +457,7 @@ public class ILPPacking implements IPacking {
         NOT_SPECIFIED_NUMBER_VALUE);
 
     return Long.parseLong(ramHint);
-    //return 1000;
+    //return 192L;
   }
 
   /**
