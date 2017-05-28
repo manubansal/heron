@@ -4,5 +4,6 @@
 #bazel test --config=darwin heron/...
 
 #selected
+bazel test --config=ubuntu heron/packing/tests/java:ILPPackingTest
 bazel test --config=ubuntu heron/packing/tests/java:RoundRobinPackingTest
 bazel test --config=ubuntu heron/packing/tests/java:HomogeneousPackingTest
