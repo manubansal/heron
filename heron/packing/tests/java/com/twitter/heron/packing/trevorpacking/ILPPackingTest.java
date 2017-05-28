@@ -52,7 +52,10 @@ public class ILPPackingTest {
         .build();
 
     //ILPPacking packing = new ILPPacking("http://po3-heron01:8000");
-    ILPPacking packing = new ILPPacking("http://localhost:8000");
+    //ILPPacking packing = new ILPPacking("http://localhost:8000");
+    ILPPacking packing = new ILPPacking();
+    packing.setServer("http://localhost:8000");
+
     packing.initialize(config, topology);
     return packing.pack();
   }

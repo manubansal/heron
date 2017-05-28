@@ -127,12 +127,14 @@ public class ILPPacking implements IPacking {
     this.instanceTranslationUrl = ILPPacking.INSTANCE_TRANSLATION_URL;
   }
 
-  public void ILPPacking(String httpServer) {
+  //public void ILPPacking(String httpServer) {
+  public void setServer(String httpServer) {
     this.contAllocationUrl = httpServer + "/container_alloc.json";
     this.instanceTranslationUrl = httpServer + "/translation.json";
     System.out.println(this.contAllocationUrl);
     System.out.println(this.instanceTranslationUrl);
   }
+
 
   @Override
   public void initialize(Config config, TopologyAPI.Topology inputTopology) {
