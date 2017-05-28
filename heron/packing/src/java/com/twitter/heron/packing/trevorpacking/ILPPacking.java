@@ -119,6 +119,18 @@ public class ILPPacking implements IPacking {
   private double instanceCpuDefault;
   private long instanceDiskDefault;
 
+  public void ILPPacking() {
+    this.cont_allocation_url = this.CONT_ALLOCATION_URL;
+    this.instance_translation_url = this.INSTANCE_TRANSLATION_URL;
+  }
+
+  public void ILPPacking(String httpServer) {
+    this.cont_allocation_url = httpServer + "/container_alloc.json";
+    this.instance_translation_url = httpServer + "/translation.json";
+    System.out.println(this.cont_allocation_url);
+    System.out.println(this.instance_translation_url);
+  }
+
   @Override
   public void initialize(Config config, TopologyAPI.Topology inputTopology) {
     this.topology = inputTopology;
