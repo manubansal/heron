@@ -86,3 +86,11 @@ java_test(
     size = "small",
 )
 
+java_test(
+    name = "ILPPackingTest",
+    srcs = glob(
+        ["**/trevorpacking/ILPPackingTest.java"]
+    ),
+    deps = trevorpacking_deps_files,
+    size = "small",
+)
